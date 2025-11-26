@@ -1,0 +1,37 @@
+import { AiExtraction } from "../aiExtraction/AiExtraction";
+import { Attachment } from "../attachment/Attachment";
+import { AuditLog } from "../auditLog/AuditLog";
+import { Transaction } from "../transaction/Transaction";
+import { Invitation } from "../invitation/Invitation";
+import { AccountMembership } from "../accountMembership/AccountMembership";
+import { UserSetting } from "../userSetting/UserSetting";
+
+export type User = {
+  aiExtractions?: Array<AiExtraction>;
+  attachments?: Array<Attachment>;
+  auditLogs?: Array<AuditLog>;
+  avatarUrl: string | null;
+  counterpartyTransactions?: Array<Transaction>;
+  country: string | null;
+  createdAt: Date;
+  deletedAt: Date | null;
+  email: string;
+  emailVerified: boolean;
+  fingerprintEnabled: boolean;
+  fullName: string | null;
+  id: number;
+  invitationsReceived?: Array<Invitation>;
+  invitationsSent?: Array<Invitation>;
+  language: string;
+  memberships?: Array<AccountMembership>;
+  passwordHash: string | null;
+  phone: string | null;
+  postcode: string | null;
+  provider?: "LOCAL" | "GOOGLE" | "APPLE";
+  providerId: string | null;
+  providerToken: string | null;
+  settings?: UserSetting | null;
+  transactions?: Array<Transaction>;
+  updatedAt: Date;
+  username: string | null;
+};

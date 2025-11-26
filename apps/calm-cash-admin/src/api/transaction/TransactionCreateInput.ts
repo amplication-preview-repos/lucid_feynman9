@@ -1,0 +1,31 @@
+import { AccountWhereUniqueInput } from "../account/AccountWhereUniqueInput";
+import { AiExtractionWhereUniqueInput } from "../aiExtraction/AiExtractionWhereUniqueInput";
+import { Decimal } from "decimal.js";
+import { AttachmentCreateNestedManyWithoutTransactionsInput } from "./AttachmentCreateNestedManyWithoutTransactionsInput";
+import { CategoryWhereUniqueInput } from "../category/CategoryWhereUniqueInput";
+import { UserWhereUniqueInput } from "../user/UserWhereUniqueInput";
+import { InputJsonValue } from "../../types";
+
+export type TransactionCreateInput = {
+  account?: AccountWhereUniqueInput | null;
+  aiExtraction?: AiExtractionWhereUniqueInput | null;
+  amount: Decimal;
+  attachments?: AttachmentCreateNestedManyWithoutTransactionsInput;
+  category?: CategoryWhereUniqueInput | null;
+  counterpartyName?: string | null;
+  counterpartyUser?: UserWhereUniqueInput | null;
+  currency: string;
+  dateOccurred: Date;
+  deletedAt?: Date | null;
+  description?: string | null;
+  dueDate?: Date | null;
+  externalRef?: string | null;
+  isRecurring: boolean;
+  meta?: InputJsonValue;
+  paidAt?: Date | null;
+  recordedBy: UserWhereUniqueInput;
+  recurrenceRule?: string | null;
+  status: "DRAFT" | "CONFIRMED" | "PAID" | "RECEIVED" | "CANCELLED";
+  title: string;
+  type: "EXPENSE" | "INCOME" | "ACCOUNT_RECEIVABLE" | "ACCOUNT_PAYABLE";
+};

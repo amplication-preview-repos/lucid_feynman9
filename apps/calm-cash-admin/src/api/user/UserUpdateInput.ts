@@ -1,0 +1,34 @@
+import { AiExtractionUpdateManyWithoutUsersInput } from "./AiExtractionUpdateManyWithoutUsersInput";
+import { AttachmentUpdateManyWithoutUsersInput } from "./AttachmentUpdateManyWithoutUsersInput";
+import { AuditLogUpdateManyWithoutUsersInput } from "./AuditLogUpdateManyWithoutUsersInput";
+import { TransactionUpdateManyWithoutUsersInput } from "./TransactionUpdateManyWithoutUsersInput";
+import { InvitationUpdateManyWithoutUsersInput } from "./InvitationUpdateManyWithoutUsersInput";
+import { AccountMembershipUpdateManyWithoutUsersInput } from "./AccountMembershipUpdateManyWithoutUsersInput";
+import { UserSettingWhereUniqueInput } from "../userSetting/UserSettingWhereUniqueInput";
+
+export type UserUpdateInput = {
+  aiExtractions?: AiExtractionUpdateManyWithoutUsersInput;
+  attachments?: AttachmentUpdateManyWithoutUsersInput;
+  auditLogs?: AuditLogUpdateManyWithoutUsersInput;
+  avatarUrl?: string | null;
+  counterpartyTransactions?: TransactionUpdateManyWithoutUsersInput;
+  country?: string | null;
+  deletedAt?: Date | null;
+  email?: string;
+  emailVerified?: boolean;
+  fingerprintEnabled?: boolean;
+  fullName?: string | null;
+  invitationsReceived?: InvitationUpdateManyWithoutUsersInput;
+  invitationsSent?: InvitationUpdateManyWithoutUsersInput;
+  language?: string;
+  memberships?: AccountMembershipUpdateManyWithoutUsersInput;
+  passwordHash?: string | null;
+  phone?: string | null;
+  postcode?: string | null;
+  provider?: "LOCAL" | "GOOGLE" | "APPLE";
+  providerId?: string | null;
+  providerToken?: string | null;
+  settings?: UserSettingWhereUniqueInput | null;
+  transactions?: TransactionUpdateManyWithoutUsersInput;
+  username?: string | null;
+};
