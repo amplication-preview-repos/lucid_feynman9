@@ -1,0 +1,34 @@
+import { AiExtractionCreateNestedManyWithoutUsersInput } from "./AiExtractionCreateNestedManyWithoutUsersInput";
+import { AttachmentCreateNestedManyWithoutUsersInput } from "./AttachmentCreateNestedManyWithoutUsersInput";
+import { AuditLogCreateNestedManyWithoutUsersInput } from "./AuditLogCreateNestedManyWithoutUsersInput";
+import { TransactionCreateNestedManyWithoutUsersInput } from "./TransactionCreateNestedManyWithoutUsersInput";
+import { InvitationCreateNestedManyWithoutUsersInput } from "./InvitationCreateNestedManyWithoutUsersInput";
+import { AccountMembershipCreateNestedManyWithoutUsersInput } from "./AccountMembershipCreateNestedManyWithoutUsersInput";
+import { UserSettingWhereUniqueInput } from "../userSetting/UserSettingWhereUniqueInput";
+
+export type UserCreateInput = {
+  aiExtractions?: AiExtractionCreateNestedManyWithoutUsersInput;
+  attachments?: AttachmentCreateNestedManyWithoutUsersInput;
+  auditLogs?: AuditLogCreateNestedManyWithoutUsersInput;
+  avatarUrl?: string | null;
+  counterpartyTransactions?: TransactionCreateNestedManyWithoutUsersInput;
+  country?: string | null;
+  deletedAt?: Date | null;
+  email: string;
+  emailVerified: boolean;
+  fingerprintEnabled: boolean;
+  fullName?: string | null;
+  invitationsReceived?: InvitationCreateNestedManyWithoutUsersInput;
+  invitationsSent?: InvitationCreateNestedManyWithoutUsersInput;
+  language: string;
+  memberships?: AccountMembershipCreateNestedManyWithoutUsersInput;
+  passwordHash?: string | null;
+  phone?: string | null;
+  postcode?: string | null;
+  provider: "LOCAL" | "GOOGLE" | "APPLE";
+  providerId?: string | null;
+  providerToken?: string | null;
+  settings?: UserSettingWhereUniqueInput | null;
+  transactions?: TransactionCreateNestedManyWithoutUsersInput;
+  username?: string | null;
+};

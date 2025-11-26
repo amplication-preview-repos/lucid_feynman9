@@ -1,0 +1,34 @@
+import { Account } from "../account/Account";
+import { AiExtraction } from "../aiExtraction/AiExtraction";
+import { Decimal } from "decimal.js";
+import { Attachment } from "../attachment/Attachment";
+import { Category } from "../category/Category";
+import { User } from "../user/User";
+import { JsonValue } from "type-fest";
+
+export type Transaction = {
+  account?: Account | null;
+  aiExtraction?: AiExtraction | null;
+  amount: Decimal;
+  attachments?: Array<Attachment>;
+  category?: Category | null;
+  counterpartyName: string | null;
+  counterpartyUser?: User | null;
+  createdAt: Date;
+  currency: string;
+  dateOccurred: Date;
+  deletedAt: Date | null;
+  description: string | null;
+  dueDate: Date | null;
+  externalRef: string | null;
+  id: string;
+  isRecurring: boolean;
+  meta: JsonValue;
+  paidAt: Date | null;
+  recordedBy?: User;
+  recurrenceRule: string | null;
+  status?: "DRAFT" | "CONFIRMED" | "PAID" | "RECEIVED" | "CANCELLED";
+  title: string;
+  type?: "EXPENSE" | "INCOME" | "ACCOUNT_RECEIVABLE" | "ACCOUNT_PAYABLE";
+  updatedAt: Date;
+};

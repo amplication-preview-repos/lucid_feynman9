@@ -1,0 +1,239 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Account {
+  balanceCents Int?
+  createdAt    DateTime            @default(now())
+  currency     String              @default("USD")
+  deletedAt    DateTime?
+  id           String              @id @default(uuid())
+  invitations  Invitation[]
+  isCompany    Boolean             @default(false)
+  memberships  AccountMembership[]
+  name         String
+  note         String?
+  transactions Transaction[]
+  updatedAt    DateTime            @updatedAt
+}
+
+model User {
+  aiExtractions            AiExtraction[]
+  attachments              Attachment[]
+  auditLogs                AuditLog[]
+  avatarUrl                String?
+  counterpartyTransactions Transaction[]       @relation(name: "counterpartyTransactions")
+  country                  String?
+  createdAt                DateTime            @default(now())
+  deletedAt                DateTime?
+  email                    String              @unique
+  emailVerified            Boolean             @default(false)
+  fingerprintEnabled       Boolean             @default(false)
+  fullName                 String?
+  id                       Int                 @id @default(autoincrement())
+  invitationsReceived      Invitation[]        @relation(name: "invitationsReceived")
+  invitationsSent          Invitation[]        @relation(name: "invitationsSent")
+  language                 String              @default("en")
+  memberships              AccountMembership[]
+  passwordHash             String?
+  phone                    String?
+  postcode                 String?
+  provider                 EnumUserProvider    @default(LOCAL)
+  providerId               String?
+  providerToken            String?
+  settings                 UserSetting?
+  transactions             Transaction[]       @relation(name: "recordedBy")
+  updatedAt                DateTime            @updatedAt
+  username                 String?             @unique
+}
+
+model AccountMembership {
+  account   Account                   @relation(fields: [accountId], references: [id])
+  accountId String
+  id        String                    @id @default(uuid())
+  isActive  Boolean                   @default(true)
+  joinedAt  DateTime                  @default(now())
+  role      EnumAccountMembershipRole @default(MEMBER)
+  user      User                      @relation(fields: [userId], references: [id])
+  userId    Int
+
+  @@unique([userId, accountId])
+}
+
+model Invitation {
+  account      Account?             @relation(fields: [accountId], references: [id])
+  accountId    String?
+  createdAt    DateTime             @default(now())
+  expiresAt    DateTime?
+  id           String               @id @default(uuid())
+  invitee      User?                @relation(name: "invitationsReceived", fields: [inviteeId], references: [id])
+  inviteeId    Int?
+  inviteeEmail String
+  inviter      User                 @relation(name: "invitationsSent", fields: [inviterId], references: [id])
+  inviterId    Int
+  status       EnumInvitationStatus @default(PENDING)
+  token        String               @unique
+
+  @@index([inviteeEmail])
+}
+
+model Transaction {
+  account            Account?              @relation(fields: [accountId], references: [id])
+  accountId          String?
+  aiExtraction       AiExtraction?
+  amount             Decimal               @db.Decimal(20, 6)
+  attachments        Attachment[]
+  category           Category?             @relation(fields: [categoryId], references: [id])
+  categoryId         String?
+  counterpartyName   String?
+  counterpartyUser   User?                 @relation(name: "counterpartyTransactions", fields: [counterpartyUserId], references: [id])
+  counterpartyUserId Int?
+  createdAt          DateTime              @default(now())
+  currency           String                @default("USD")
+  dateOccurred       DateTime
+  deletedAt          DateTime?
+  description        String?
+  dueDate            DateTime?
+  externalRef        String?
+  id                 String                @id @default(uuid())
+  isRecurring        Boolean               @default(false)
+  meta               Json?
+  paidAt             DateTime?
+  recordedBy         User                  @relation(name: "recordedBy", fields: [recordedById], references: [id])
+  recordedById       Int
+  recurrenceRule     String?
+  status             EnumTransactionStatus @default(CONFIRMED)
+  title              String
+  type               EnumTransactionType
+  updatedAt          DateTime              @updatedAt
+
+  @@index([accountId])
+  @@index([type])
+  @@index([dateOccurred])
+}
+
+model Category {
+  aiExtractions AiExtraction[]
+  children      Category[]     @relation(name: "children")
+  createdAt     DateTime       @default(now())
+  icon          String?
+  id            String         @id @default(uuid())
+  isIncome      Boolean        @default(false)
+  name          String
+  parent        Category?      @relation(name: "children", fields: [parentId], references: [id])
+  parentId      String?
+  transactions  Transaction[]
+  updatedAt     DateTime       @updatedAt
+}
+
+model Attachment {
+  createdAt     DateTime     @default(now())
+  id            String       @id @default(uuid())
+  kind          String
+  mimeType      String
+  sizeBytes     Int?
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  transactionId String?
+  transcript    String?
+  uploadedBy    User         @relation(fields: [uploadedById], references: [id])
+  uploadedById  Int
+  url           String
+}
+
+model AiExtraction {
+  actorReviewed      Boolean                       @default(false)
+  amount             Decimal?                      @db.Decimal(20, 6)
+  confidenceScore    Float?
+  currency           String?
+  description        String?
+  extractedAt        DateTime                      @default(now())
+  extractedBy        User?                         @relation(fields: [extractedById], references: [id])
+  extractedById      Int?
+  id                 String                        @id @default(uuid())
+  inferredCategory   Category?                     @relation(fields: [inferredCategoryId], references: [id])
+  inferredCategoryId String?
+  inferredType       EnumAiExtractionInferredType?
+  meta               Json?
+  rawPayload         Json
+  reviewerId         String?
+  shopName           String?
+  transaction        Transaction                   @relation(fields: [transactionId], references: [id])
+  transactionId      String                        @unique
+
+  @@map("AIExtraction")
+}
+
+model UserSetting {
+  createdAt        DateTime @default(now())
+  defaultAccountId String?
+  enableBiometrics Boolean  @default(false)
+  id               String   @id @default(uuid())
+  language         String   @default("en")
+  timeZone         String?  @default("UTC")
+  updatedAt        DateTime @updatedAt
+  user             User     @relation(fields: [userId], references: [id])
+  userId           Int      @unique
+
+  @@map("UserSettings")
+}
+
+model AuditLog {
+  action       String
+  createdAt    DateTime @default(now())
+  id           String   @id @default(uuid())
+  ipAddress    String?
+  payload      Json?
+  resourceId   String?
+  resourceType String?
+  user         User?    @relation(fields: [userId], references: [id])
+  userId       Int?
+
+  @@index([userId])
+}
+
+enum EnumUserProvider {
+  LOCAL
+  GOOGLE
+  APPLE
+}
+
+enum EnumAccountMembershipRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum EnumInvitationStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+  EXPIRED
+}
+
+enum EnumTransactionStatus {
+  DRAFT
+  CONFIRMED
+  PAID
+  RECEIVED
+  CANCELLED
+}
+
+enum EnumTransactionType {
+  EXPENSE
+  INCOME
+  ACCOUNT_RECEIVABLE
+  ACCOUNT_PAYABLE
+}
+
+enum EnumAiExtractionInferredType {
+  EXPENSE
+  INCOME
+  ACCOUNT_RECEIVABLE
+  ACCOUNT_PAYABLE
+}
